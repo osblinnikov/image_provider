@@ -1,4 +1,8 @@
 # Prerequisites
+*.dblite
+Release
+Debug
+build
 *.d
 
 # Object files
