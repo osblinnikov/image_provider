@@ -11,4 +11,6 @@
 
 void image_provider();
 
+void show_image(const char* relative_path);
+
 #endif // IMAGE_PROVIDER_H_

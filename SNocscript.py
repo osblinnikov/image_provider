@@ -12,24 +12,28 @@ def with_gpp(env):
 
     args['compiler'] = 'gpp'
     args['platform'] = 'x64'
-    arg_list.append(('cppflag', '-std=c++11'))
 
-    return prepare_env(args, arg_list)
+    nenv = prepare_env(args, arg_list)
+
+    env['prj_env']['TOOLS'] = nenv['TOOLS']
+    env['prj_env']['CC'] = nenv['CC']
+    env['prj_env']['LINKFLAGS'] = nenv['LINKFLAGS'] + ['-std=c++11']
+    env['prj_env']['CPPFLAGS'] = nenv['CPPFLAGS'] + ['-std=c++11']
+    env['prj_env']['CCFLAGS'] = []
+    env['prj_env']['CPPDEFINES'] = nenv['CPPDEFINES']
+    env['prj_env']['LIBPATH'] = nenv['LIBPATH']
 
 def AddOpenCV(env):
-    conf = Configure(env['prj_env'])
     env['prj_env'].ParseConfig('pkg-config --cflags --libs opencv4')
-    env['prj_env'] = conf.Finish()
 
-def add_dependencies(env):
+def add_dependencies(env, run):
+    with_gpp(env)
     AddOpenCV(env)
     # AddDependency(env,'libcaf_core','github.com/actor-framework/libcaf_core')
     # AddPthreads(env)
     # AddNetwork(env)
     # AddOpenGL(env)
     return
-
-nenv = with_gpp(env)
 
 c = {}
 c['PROG_NAME'] = 'image_provider'
@@ -40,13 +44,5 @@ c['defines'] = []
 c['depsDynamic'] = add_dependencies
 c['depsStatic'] = add_dependencies
 c['runnableOnly'] = False
-
-c['TOOLS'] = nenv['TOOLS']
-c['CC'] = nenv['CC']
-c['LINKFLAGS'] = nenv['LINKFLAGS']
-c['CCFLAGS'] = nenv['CPPFLAGS']
-c['CPPDEFINES'] = nenv['CPPDEFINES']
-c['LINKFLAGS'] = nenv['LINKFLAGS']
-c['LIBPATH'] = nenv['LIBPATH']
 
 DefaultLibraryConfig(env,c)
